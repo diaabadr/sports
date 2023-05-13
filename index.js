@@ -3,7 +3,7 @@ let img = document.querySelector("img");
 
 // Set the initial position of the image
 let x = 0;
-let y = 0;
+let y = 90;
 img.style.left = x + "px";
 img.style.bottom = y + "px";
 

@@ -10,9 +10,12 @@ img.style.bottom = y + "px";
 // Set the target position of the image
 let targetX = window.innerWidth - img.offsetWidth-50;
 let targetY = 0;
-
+let distanceX = targetX - x;
+let distanceY = targetY - y;
+let distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+let speed = 10;
 // Set the duration of the animation in milliseconds
-let duration = 1000;
+let duration = distance / speed * 1000;
 
 // Get the start time of the animation
 let startTime = null;
@@ -39,4 +42,4 @@ function interpolate(start, end, progress) {
 }
 
 // Start the animation
-// requestAnimationFrame(animate);
+requestAnimationFrame(animate);

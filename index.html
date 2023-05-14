@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
     <title>Sports</title>
     <style>
         body {
@@ -28,6 +29,19 @@
 <body>
     <img src="ball.png" width="40" height="40" alt="">
     <img src="soccer-goal.png" class="soccer-goal" width="450" height="450" alt="">
+
+    <form>
+        <label for="distance">Distance from the goal:</label>
+        <input type="text" id="distance" name="distance">
+        
+        <label for="angle">Firing angle:</label>
+        <input type="text" id="angle" name="angle">
+        
+        <label for="velocity">Firing velocity:</label>
+        <input type="text" id="velocity" name="velocity">
+        
+        <button type="submit" id="submitBtn">Submit</button>
+    </form>
 </body>
 <script src="index.js"></script>
 

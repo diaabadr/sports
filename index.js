@@ -1,6 +1,20 @@
 // Get a reference to the image element
 let img = document.querySelector("img");
 
+const form = document.querySelector('form');
+
+form.addEventListener('submit', (event) => {
+    event.preventDefault(); // prevent the form from submitting
+    
+    // get the values of the input fields
+    const distance = document.querySelector('#distance').value;
+    const angle = document.querySelector('#angle').value;
+    const velocity = document.querySelector('#velocity').value;
+    
+    // Start the animation
+    requestAnimationFrame(animate);
+});
+
 // Set the initial position of the image
 let x = 0;
 let y = 90;
@@ -41,5 +55,3 @@ function interpolate(start, end, progress) {
   return start + (end - start) * progress;
 }
 
-// Start the animation
-requestAnimationFrame(animate);

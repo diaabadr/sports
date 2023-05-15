@@ -10,16 +10,16 @@ export let vars = {
 
 // Print out the results
 let maxHeight = calculateMaxHeight(velocity, angle);
-console.log(`Maximum height: ${maxHeight} m`);
+// console.log(`Maximum height: ${maxHeight} m`);
 
 let distanceToMaxHeight = calculateDistanceToMaxHeight(velocity, angle);
-console.log(`Distance to maximum height: ${distanceToMaxHeight} m`);
+// console.log(`Distance to maximum height: ${distanceToMaxHeight} m`);
 
 let timeToGoal = calculateTimeToGoal(vars.distanceToGoal, vars.velocity, vars.angle);
-console.log(`Time to reach goal: ${timeToGoal} s`);
+// console.log(`Time to reach goal: ${timeToGoal} s`);
 
 let finalHeight = calculateFinalHeight(vars.distanceToGoal, vars.velocity, vars.angle);
-console.log(`Height of ball at time of goal: ${finalHeight} m`);
+// console.log(`Height of ball at time of goal: ${finalHeight} m`);
 // End print out the results
 
 // Prefunctions for the soccer ball problem
@@ -39,7 +39,7 @@ function horizontalVelocity(velocity, angle) {
 // Vy = Vo * sin(angle(rad))
 // Vy * Vy = Vo * Vo - 2 * g * H ---> Vy = 0
 // H = (Vy * Vy) / (2 * g)
-function calculateMaxHeight(velocity, angle) {
+export function calculateMaxHeight(velocity, angle) {
   let Vy = verticalVelocity(velocity, angle); // vertical component of velocity
   let maxHeight = (Vy * Vy) / (2 * g); // calculate maximum height
   return maxHeight.toFixed(2); // return maximum height
@@ -48,7 +48,7 @@ function calculateMaxHeight(velocity, angle) {
 // Vy = Voy - g * t ---> Vy = 0
 // t = Voy / g  and  Vx = Vo * cos(angle(rad))
 // dx = Vx * t
-function calculateDistanceToMaxHeight(velocity, angle) {
+export function calculateDistanceToMaxHeight(velocity, angle) {
   let radians = toRadians(angle); // convert angle to radians
   let Vy = verticalVelocity(velocity, angle); // vertical component of velocity
   let timeToMaxHeight = Vy / g; // time to reach maximum height
@@ -69,7 +69,7 @@ function calculateTimeToGoal(distance, velocity, angle) {
 // t = TimeToGoal
 // Vy = Voy - g * t
 // H = Voy * t - 0.5 * g * t * t
-function calculateFinalHeight(distance, velocity, angle) {
+export function calculateFinalHeight(distance, velocity, angle) {
   let timeToGoal = calculateTimeToGoal(distance, velocity, angle); // time to reach goal
   let Voy = verticalVelocity(velocity, angle); // vertical component of velocity at start
   let Vy = Voy - g * timeToGoal; // vertical component of velocity at time of goal

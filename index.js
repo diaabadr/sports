@@ -1,15 +1,21 @@
+import {velocity} from './functions.js';
+import {angle} from './functions.js';
+import {distanceToGoal} from './functions.js';
+
+
 // Get a reference to the image element
 let img = document.querySelector("img");
 
-const form = document.querySelector('form');
+let form = document.querySelector('form');
 
 form.addEventListener('submit', (event) => {
     event.preventDefault(); // prevent the form from submitting
     
     // get the values of the input fields
-    const distance = document.querySelector('#distance').value;
-    const angle = document.querySelector('#angle').value;
-    const velocity = document.querySelector('#velocity').value;
+    distanceToGoal = document.querySelector('#distance')?.value;
+    angle = document.querySelector('#angle').value;
+    velocity = document.querySelector('#velocity').value;
+    console.log(distanceToGoal);
     
     // Start the animation
     requestAnimationFrame(animate);

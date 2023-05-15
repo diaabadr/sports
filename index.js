@@ -1,85 +1,115 @@
-import { vars } from "./functions.js";
-import { calculateMaxHeight } from "./functions.js";
-import { calculateDistanceToMaxHeight } from "./functions.js";
-import { calculateFinalHeight } from "./functions.js";
-
 // Get a reference to the image element
-let img = document.querySelector("img");
+const image = document.querySelector("img");
 
-let form = document.querySelector("form");
+const form = document.querySelector("form");
 
-// Set the initial position of the image
-let x = 1250;
-let y = 90;
+const initialX = 1600;
+const initialY = 90;
+setBallPosition(initialX, initialY);
 
-img.style.left = x + "px";
-img.style.bottom = y + "px";
-
-// Set the target position of the image
-let targetX = 150;
-let targetY = 0;
-let distanceX = targetX - x;
-let distanceY = targetY - y;
-let distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
-let speed = 10;
-// Set the duration of the animation in milliseconds
-let duration = (distance / speed) * 1000;
-
-// Get the start time of the animation
-let startTime = null;
-let finalHeight;
-let finalx = 1250;
+function setBallPosition(x, y) {
+  image.style.left = x + "px";
+  image.style.bottom = y + "px";
+}
 
 form.addEventListener("submit", (event) => {
   event.preventDefault(); // prevent the form from submitting
 
-  vars.distanceToGoal = document.querySelector("#distance")?.value;
-  vars.angle = document.querySelector("#angle").value;
-  vars.velocity = document.querySelector("#velocity").value;
-  console.log(vars);
+  const distanceFromGoal = +document.querySelector("#distance")?.value;
+  const angle = +document.querySelector("#angle").value;
+  const velocity = +document.querySelector("#velocity").value;
+  // this is based on the stadium ground is 50m long
+  animateImage(initialX - distanceFromGoal * 32, initialY, 700);
+  setTimeout(() => {
+    const timeToMaxHeight = calculateTimeToMaxHeight(velocity, angle);
+    animateImage(
+      initialX - +calculateDistanceToMaxHeight(velocity, angle) * 32,
+      initialY + +calculateMaxHeight(velocity, angle) * 64,
+      +timeToMaxHeight * 1000
+    );
+    setTimeout(() => {
+      const timeRemaining = +calcTimeFromMaxHeightToGoal(
+        distanceFromGoal,
+        velocity,
+        angle
+      );
+      const finalHeight = +calcFinalHeight(distanceFromGoal, velocity, angle);
 
-  x = (1-vars.distanceToGoal/50) * 1250
-  y = 90;
-  targetY = calculateMaxHeight(vars.velocity, vars.angle);
-  console.log(`target Y: ${targetY} m`);
-  targetY =  (targetY/2.44) * 450 - 120;
-  console.log(`ball Maximum height: ${targetY} m`);
-  targetX = calculateDistanceToMaxHeight(vars.velocity, vars.angle);
-  let restOfDistance = vars.distanceToGoal - targetX;
-  targetX = (1-targetX/50) * 1250;
-  finalHeight = calculateFinalHeight(restOfDistance, vars.velocity, vars.angle);
-  console.log(`final height: ${finalHeight} m`);
-  console.log(`target X: ${targetX} m`);
-  distanceX = targetX - x;
-  distanceY = targetY - y;
-  distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
-  speed = vars.velocity;
-  duration = (distance / speed) * 1000;
-  startTime = performance.now(); // initialize the start time to the current time
-
-  // Start the animation
-  requestAnimationFrame(animate);
+      animateImage(initialX, initialY + finalHeight*64, timeRemaining * 1000);
+    }, +timeToMaxHeight * 1000);
+  }, 1500);
 });
 
-// Define the animation function
-function animate(currentTime) {
-  let elapsedTime = currentTime - startTime;
-  let progress = Math.min(elapsedTime / duration, 1);
-  x = interpolate(x, targetX, progress);
-  y = interpolate(y, targetY, progress);
-  if(x == targetX){
-    targetX = finalx;
-    targetY = finalHeight;
-    console.log("second phase is working");
-  }
-  img.style.left = x + "px";
-  img.style.bottom = y + "px";
-  if (progress < 1) {
-    requestAnimationFrame(animate);
-  }
+const g = 9.81;
+
+function toRadians(degrees) {
+  return degrees * (Math.PI / 180);
+}
+function verticalVelocity(velocity, angle) {
+  return velocity * Math.sin(toRadians(angle));
+}
+function horizontalVelocity(velocity, angle) {
+  return velocity * Math.cos(toRadians(angle));
 }
 
-// Define the interpolation function
-function interpolate(start, end, progress) {
-  return start + (end - start) * progress;
+function calculateTimeToMaxHeight(velocity, angle) {
+  return (verticalVelocity(velocity, angle) / g).toFixed(5);
 }
+
+function calculateMaxHeight(velocity, angle) {
+  timeToMaxHeight = calculateTimeToMaxHeight(velocity, angle);
+  let maxHeight =
+    verticalVelocity(velocity, angle) * timeToMaxHeight -
+    0.5 * g * timeToMaxHeight * timeToMaxHeight;
+  return maxHeight.toFixed(5);
+}
+
+function calculateDistanceToMaxHeight(velocity, angle) {
+  return (
+    horizontalVelocity(velocity, angle) *
+    calculateTimeToMaxHeight(velocity, angle)
+  ).toFixed(5);
+}
+
+function calcFinalHeight(distance, velocity, angle) {
+  const timeRemaining = calcTimeFromMaxHeightToGoal(distance, velocity, angle);
+  return (
+    calculateMaxHeight(velocity, angle) -
+    0.5 * g * timeRemaining * timeRemaining
+  ).toFixed(5);
+}
+
+function calcTimeFromMaxHeightToGoal(distance, velocity, angle) {
+  const remainingDistance =
+    distance - calculateDistanceToMaxHeight(velocity, angle);
+  let timeRemaining = remainingDistance / horizontalVelocity(velocity, angle);
+
+  return timeRemaining.toFixed(5);
+}
+
+function animateImage(endLeft, endBottom, duration) {
+  const startLeft = parseFloat(getComputedStyle(image).left);
+  const startBottom = parseFloat(getComputedStyle(image).bottom);
+  const deltaX = endLeft - startLeft;
+  const deltaY = endBottom - startBottom;
+  const startTime = performance.now();
+
+  function step(currentTime) {
+    const timeDiff = currentTime - startTime;
+    const progress = Math.min(timeDiff / duration, 1);
+    const xPos = startLeft + deltaX * progress;
+    const yPos = startBottom + deltaY * progress;
+    image.style.left = xPos + "px";
+    image.style.bottom = yPos + "px";
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    }
+  }
+
+  requestAnimationFrame(step);
+}
+
+// animateImage(x, y, 100, 100, 10000);
+// setTimeout(() => {
+//   animateImage(100, 100, x, y, 10000);
+// }, 10000);

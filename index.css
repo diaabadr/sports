@@ -16,3 +16,10 @@ input {
     padding: 5px;
     margin-right: 20px;
 }
+
+form p {
+    position: absolute;
+    top: 10%;
+    color: white;
+    margin-top: 10px;
+    font-size: 1.2em;

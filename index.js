@@ -3,7 +3,7 @@ const image = document.querySelector("img");
 
 const form = document.querySelector("form");
 
-const initialX = 1600;
+const initialX = 1250;
 const initialY = 90;
 setBallPosition(initialX, initialY);
 
@@ -11,6 +11,9 @@ function setBallPosition(x, y) {
   image.style.left = x + "px";
   image.style.bottom = y + "px";
 }
+
+const maxAndFinalHeight = document.createElement("p");
+form.appendChild(maxAndFinalHeight);
 
 form.addEventListener("submit", (event) => {
   event.preventDefault(); // prevent the form from submitting
@@ -36,6 +39,7 @@ form.addEventListener("submit", (event) => {
       const finalHeight = +calcFinalHeight(distanceFromGoal, velocity, angle);
 
       animateImage(initialX, initialY + finalHeight*64, timeRemaining * 1000);
+      maxAndFinalHeight.innerText = `Maximum height: ${calculateMaxHeight(velocity, angle)}, Final height: ${finalHeight}`;
     }, +timeToMaxHeight * 1000);
   }, 1500);
 });

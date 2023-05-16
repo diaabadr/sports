@@ -3,7 +3,7 @@ const image = document.querySelector("img");
 
 const form = document.querySelector("form");
 
-const initialX = 1250;
+const initialX = 1600;
 const initialY = 90;
 setBallPosition(initialX, initialY);
 
@@ -22,14 +22,18 @@ form.addEventListener("submit", (event) => {
   const angle = +document.querySelector("#angle").value;
   const velocity = +document.querySelector("#velocity").value;
   // this is based on the stadium ground is 50m long
-  animateImage(initialX - distanceFromGoal * 32, initialY, 700);
+  const initDist = initialX - distanceFromGoal * 32;
+  console.log(initDist, initialY);
+  setBallPosition(initDist, initialY);
+  console.log(initDist, initialY);
   setTimeout(() => {
     const timeToMaxHeight = calculateTimeToMaxHeight(velocity, angle);
     animateImage(
-      initialX - +calculateDistanceToMaxHeight(velocity, angle) * 32,
+      initDist + +calculateDistanceToMaxHeight(velocity, angle) * 32,
       initialY + +calculateMaxHeight(velocity, angle) * 64,
       +timeToMaxHeight * 1000
     );
+    console.log(calculateDistanceToMaxHeight(velocity, angle));
     setTimeout(() => {
       const timeRemaining = +calcTimeFromMaxHeightToGoal(
         distanceFromGoal,
@@ -38,10 +42,13 @@ form.addEventListener("submit", (event) => {
       );
       const finalHeight = +calcFinalHeight(distanceFromGoal, velocity, angle);
 
-      animateImage(initialX, initialY + finalHeight*64, timeRemaining * 1000);
-      maxAndFinalHeight.innerText = `Maximum height: ${calculateMaxHeight(velocity, angle)}, Final height: ${finalHeight}`;
-    }, +timeToMaxHeight * 1000);
-  }, 1500);
+      animateImage(initialX, initialY + finalHeight * 64, timeRemaining * 1000);
+      maxAndFinalHeight.innerText = `Maximum height: ${calculateMaxHeight(
+        velocity,
+        angle
+      )}m , Final height: ${finalHeight} m`;
+    }, +timeToMaxHeight * 1000 + 500);
+  }, 1500 + 500);
 });
 
 const g = 9.81;
@@ -105,7 +112,12 @@ function animateImage(endLeft, endBottom, duration) {
     const yPos = startBottom + deltaY * progress;
     image.style.left = xPos + "px";
     image.style.bottom = yPos + "px";
-    if (progress < 1) {
+    const currentBottom = parseFloat(getComputedStyle(image).bottom);
+    currentLeft = parseFloat(getComputedStyle(image).left);
+    if (currentLeft > 1850|| currentBottom > 900) {
+      return;
+    }
+    else if (progress < 1) {
       requestAnimationFrame(step);
     }
   }

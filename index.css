@@ -11,6 +11,11 @@ label {
     color: white;
 }
 
+img {
+    position: absolute;
+    object-fit: cover;
+}
+
 input {
     width: 100px;
     padding: 5px;
@@ -23,3 +28,8 @@ form p {
     color: white;
     margin-top: 10px;
     font-size: 1.2em;
+}
+body {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
